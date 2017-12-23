@@ -1,4 +1,4 @@
-import gym
+import gym, gym_CAG
 
 from baselines import deepq
 from baselines.common import set_global_seeds
@@ -17,9 +17,10 @@ def main():
     args = parser.parse_args()
     logger.configure()
     set_global_seeds(args.seed)
-    env = make_atari(args.env)
+    env = gym.make('CAG-v0')
+    #env = make_atari(args.env)
     env = bench.Monitor(env, logger.get_dir())
-    env = deepq.wrap_atari_dqn(env)
+    #env = deepq.wrap_atari_dqn(env)
     model = deepq.models.cnn_to_mlp(
         convs=[(32, 8, 4), (64, 4, 2), (64, 3, 1)],
         hiddens=[256],
