@@ -4,7 +4,7 @@ from mpi4py import MPI
 from baselines.common import set_global_seeds
 from baselines import bench
 import os.path as osp
-import gym, logging
+import gym, logging, gym_CAG
 from baselines import logger
 from baselines.common.atari_wrappers import make_atari, wrap_deepmind
 
