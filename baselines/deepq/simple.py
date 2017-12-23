@@ -188,7 +188,6 @@ def learn(env,
         'q_func': q_func,
         'num_actions': env.action_space.n,
     }
-    print('asd')
     act = ActWrapper(act, act_params)
 
     # Create the replay buffer
@@ -218,6 +217,7 @@ def learn(env,
     with tempfile.TemporaryDirectory() as td:
         model_saved = False
         model_file = os.path.join(td, "model")
+        print('asd')
         for t in range(max_timesteps):
             if callback is not None:
                 if callback(locals(), globals()):
@@ -244,7 +244,7 @@ def learn(env,
             # Store transition in the replay buffer.
             replay_buffer.add(obs, action, rew, new_obs, float(done))
             obs = new_obs
-
+            print('qwe')
             episode_rewards[-1] += rew
             if done:
                 obs = env.reset()
