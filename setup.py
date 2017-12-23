@@ -6,7 +6,7 @@ if sys.version_info.major != 3:
           "Python {}. The installation will likely fail.".format(sys.version_info.major))
 
 
-setup(name='baselines',
+setup(name='baselines_wjh',
       packages=[package for package in find_packages()
                 if package.startswith('baselines')],
       install_requires=[
