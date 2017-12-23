@@ -13,13 +13,13 @@ def main():
     parser.add_argument('--seed', help='RNG seed', type=int, default=0)
     parser.add_argument('--prioritized', type=int, default=1)
     parser.add_argument('--dueling', type=int, default=1)
-    parser.add_argument('--num-timesteps', type=int, default=int(10e6))
+    parser.add_argument('--num-timesteps', type=int, default=int(100))
     args = parser.parse_args()
     logger.configure()
     set_global_seeds(args.seed)
     env = gym.make('CAG-v0')
     #env = make_atari(args.env)
-    #env = bench.Monitor(env, logger.get_dir())
+    env = bench.Monitor(env, logger.get_dir())
     #env = deepq.wrap_atari_dqn(env)
     model = deepq.models.cnn_to_mlp(
         convs=[(32, 8, 4), (64, 4, 2), (64, 3, 1)],
@@ -31,12 +31,12 @@ def main():
         q_func=model,
         lr=1e-4,
         max_timesteps=args.num_timesteps,
-        buffer_size=10000,
+        buffer_size=1000,
         exploration_fraction=0.1,
         exploration_final_eps=0.01,
-        train_freq=4,
-        learning_starts=10000,
-        target_network_update_freq=1000,
+        train_freq=1,
+        learning_starts=1000,
+        target_network_update_freq=100,
         gamma=0.99,
         prioritized_replay=bool(args.prioritized)
     )
