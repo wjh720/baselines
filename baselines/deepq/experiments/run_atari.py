@@ -19,7 +19,7 @@ def main():
     set_global_seeds(args.seed)
     env = gym.make('CAG-v0')
     #env = make_atari(args.env)
-    env = bench.Monitor(env, logger.get_dir())
+    #env = bench.Monitor(env, logger.get_dir())
     #env = deepq.wrap_atari_dqn(env)
     model = deepq.models.cnn_to_mlp(
         convs=[(32, 8, 4), (64, 4, 2), (64, 3, 1)],
