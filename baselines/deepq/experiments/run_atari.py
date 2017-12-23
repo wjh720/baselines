@@ -26,6 +26,7 @@ def main():
         hiddens=[256],
         dueling=bool(args.dueling),
     )
+    print('jb')
     act = deepq.learn(
         env,
         q_func=model,
@@ -41,6 +42,7 @@ def main():
         prioritized_replay=bool(args.prioritized)
     )
     # act.save("pong_model.pkl") XXX
+    print('jb')
     env.close()
 
 
