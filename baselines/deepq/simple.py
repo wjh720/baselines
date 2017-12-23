@@ -87,7 +87,7 @@ def learn(env,
           batch_size=32,
           print_freq=100,
           checkpoint_freq=10000,
-          learning_starts=1000,
+          learning_starts=100,
           gamma=1.0,
           target_network_update_freq=500,
           prioritized_replay=False,
@@ -217,7 +217,7 @@ def learn(env,
     with tempfile.TemporaryDirectory() as td:
         model_saved = False
         model_file = os.path.join(td, "model")
-        print('asd')
+
         for t in range(max_timesteps):
             if callback is not None:
                 if callback(locals(), globals()):
@@ -244,7 +244,7 @@ def learn(env,
             # Store transition in the replay buffer.
             replay_buffer.add(obs, action, rew, new_obs, float(done))
             obs = new_obs
-            print('qwe')
+
             episode_rewards[-1] += rew
             if done:
                 obs = env.reset()

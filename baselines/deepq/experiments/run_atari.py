@@ -13,7 +13,7 @@ def main():
     parser.add_argument('--seed', help='RNG seed', type=int, default=0)
     parser.add_argument('--prioritized', type=int, default=1)
     parser.add_argument('--dueling', type=int, default=1)
-    parser.add_argument('--num-timesteps', type=int, default=int(100))
+    parser.add_argument('--num-timesteps', type=int, default=int(10000))
     args = parser.parse_args()
     logger.configure()
     set_global_seeds(args.seed)
@@ -36,8 +36,8 @@ def main():
         exploration_fraction=0.1,
         exploration_final_eps=0.01,
         train_freq=1,
-        learning_starts=1000,
-        target_network_update_freq=100,
+        learning_starts=100,
+        target_network_update_freq=50,
         gamma=0.99,
         prioritized_replay=bool(args.prioritized)
     )
