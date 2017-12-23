@@ -32,12 +32,12 @@ def main():
         q_func=model,
         lr=1e-4,
         max_timesteps=args.num_timesteps,
-        buffer_size=1000,
+        buffer_size=10000,
         exploration_fraction=0.1,
         exploration_final_eps=0.01,
         train_freq=1,
-        learning_starts=100,
-        target_network_update_freq=50,
+        learning_starts=300,
+        target_network_update_freq=10,
         gamma=0.99,
         prioritized_replay=bool(args.prioritized)
     )
