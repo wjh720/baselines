@@ -188,7 +188,7 @@ def learn(env,
         'q_func': q_func,
         'num_actions': env.action_space.n,
     }
-
+    print('asd')
     act = ActWrapper(act, act_params)
 
     # Create the replay buffer
