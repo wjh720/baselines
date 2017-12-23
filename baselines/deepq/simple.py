@@ -247,6 +247,7 @@ def learn(env,
 
             episode_rewards[-1] += rew
             if done:
+                print('num_episodes : %d' % episode_rewards[-1])
                 obs = env.reset()
                 episode_rewards.append(0.0)
                 reset = True
