@@ -20,14 +20,14 @@ class CnnPolicy(object):
     
         x = ob / 255.0
         if kind == 'small': # from A3C paper
-            x = tf.nn.relu(U.conv2d(x, 16, "l1", [8, 8], [4, 4], pad="VALID"))
-            x = tf.nn.relu(U.conv2d(x, 32, "l2", [4, 4], [2, 2], pad="VALID"))
+            x = tf.nn.relu(U.conv2d(x, 16, "l1", [3, 3], [1, 1], pad="same"))
+            x = tf.nn.relu(U.conv2d(x, 32, "l2", [3, 3], [1, 1], pad="same"))
             x = U.flattenallbut0(x)
             x = tf.nn.relu(U.dense(x, 256, 'lin', U.normc_initializer(1.0)))
         elif kind == 'large': # Nature DQN
-            x = tf.nn.relu(U.conv2d(x, 32, "l1", [8, 8], [4, 4], pad="VALID"))
-            x = tf.nn.relu(U.conv2d(x, 64, "l2", [4, 4], [2, 2], pad="VALID"))
-            x = tf.nn.relu(U.conv2d(x, 64, "l3", [3, 3], [1, 1], pad="VALID"))
+            x = tf.nn.relu(U.conv2d(x, 32, "l1", [3, 3], [1, 1], pad="same"))
+            x = tf.nn.relu(U.conv2d(x, 64, "l2", [3, 3], [1, 1], pad="same"))
+            x = tf.nn.relu(U.conv2d(x, 64, "l3", [3, 3], [1, 1], pad="same"))
             x = U.flattenallbut0(x)
             x = tf.nn.relu(U.dense(x, 512, 'lin', U.normc_initializer(1.0)))
         else:
