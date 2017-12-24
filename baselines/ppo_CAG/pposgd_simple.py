@@ -161,6 +161,10 @@ def learn(env, policy_func, *,
 
         logger.log("********** Iteration %i ************"%iters_so_far)
 
+        if (iters_so_far % 10 == 0):
+            data_path = '/home/icenter/tmp/openai_data/'
+            U.save_state(data_path + 'para_%i' % iters_so_far)
+
         seg = seg_gen.__next__()
         add_vtarg_and_adv(seg, gamma, lam)
 
