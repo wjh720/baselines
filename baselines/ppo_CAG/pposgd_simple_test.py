@@ -11,8 +11,8 @@ from collections import deque
 def test(pi, env, horizon, stochastic):
     while True:
         ob = env.reset()
-        while True:
-            time.sleep(0.5)
+        for t in range(1000):
+            time.sleep(0.3)
             env.render()
             ac, vpred = pi.act(stochastic, ob)
             ob, rew, new, _ = env.step(ac)
@@ -102,8 +102,8 @@ def learn(env, policy_func, *,
     assert sum([max_iters>0, max_timesteps>0, max_episodes>0, max_seconds>0])==1, "Only one time constraint permitted"
 
     while True:
-        data_path = '/Users/wjh720/Desktop/Tmp/para_%i/' % (timesteps_per_actorbatch / 10)
-        U.load_state(data_path + 'para_%i' % timesteps_per_actorbatch)
+        data_path = '/Users/wjh720/Desktop/Tmp/para_%i/' % (timesteps_per_actorbatch / 100)
+        U.load_state(data_path + 'para')
 
         test(pi, env, timesteps_per_actorbatch, stochastic=True)
 
