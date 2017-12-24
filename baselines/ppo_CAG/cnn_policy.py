@@ -18,7 +18,7 @@ class CnnPolicy(object):
 
         ob = U.get_placeholder(name="ob", dtype=tf.float32, shape=[sequence_length] + list(ob_space.shape))
     
-        x = ob / 255.0
+        x = ob
         if kind == 'small': # from A3C paper
             x = tf.nn.relu(U.conv2d(x, 16, "l1", [3, 3], [1, 1], pad="SAME"))
             x = tf.nn.relu(U.conv2d(x, 32, "l2", [3, 3], [1, 1], pad="SAME"))
@@ -33,18 +33,18 @@ class CnnPolicy(object):
         else:
             raise NotImplementedError
 
-        y = ob / 255.0
+        y = ob
         if kind == 'small':  # from A3C paper
-            y = tf.nn.relu(U.conv2d(y, 16, "l1", [3, 3], [1, 1], pad="SAME"))
-            y = tf.nn.relu(U.conv2d(y, 32, "l2", [3, 3], [1, 1], pad="SAME"))
+            y = tf.nn.relu(U.conv2d(y, 16, "yl1", [3, 3], [1, 1], pad="SAME"))
+            y = tf.nn.relu(U.conv2d(y, 32, "yl2", [3, 3], [1, 1], pad="SAME"))
             y = U.flattenallbut0(y)
-            y = tf.nn.relu(U.dense(y, 256, 'lin', U.normc_initializer(1.0)))
+            y = tf.nn.relu(U.dense(y, 256, 'ylin', U.normc_initializer(1.0)))
         elif kind == 'large':  # Nature DQN
-            y = tf.nn.relu(U.conv2d(y, 32, "l1", [3, 3], [1, 1], pad="SAME"))
-            y = tf.nn.relu(U.conv2d(y, 64, "l2", [3, 3], [1, 1], pad="SAME"))
-            y = tf.nn.relu(U.conv2d(y, 128, "l3", [3, 3], [1, 1], pad="SAME"))
+            y = tf.nn.relu(U.conv2d(y, 32, "yl1", [3, 3], [1, 1], pad="SAME"))
+            y = tf.nn.relu(U.conv2d(y, 64, "yl2", [3, 3], [1, 1], pad="SAME"))
+            y = tf.nn.relu(U.conv2d(y, 128, "yl3", [3, 3], [1, 1], pad="SAME"))
             y = U.flattenallbut0(y)
-            y = tf.nn.relu(U.dense(y, 512, 'lin', U.normc_initializer(1.0)))
+            y = tf.nn.relu(U.dense(y, 512, 'ylin', U.normc_initializer(1.0)))
         else:
             raise NotImplementedError
 
