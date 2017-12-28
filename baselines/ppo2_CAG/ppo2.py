@@ -13,8 +13,11 @@ class Model(object):
                 nsteps, ent_coef, vf_coef, max_grad_norm):
         sess = tf.get_default_session()
 
+        print('asd')
         act_model = policy(sess, ob_space, ac_space, nbatch_act, 1, reuse=False)
+        print('asd')
         train_model = policy(sess, ob_space, ac_space, nbatch_train, nsteps, reuse=True)
+        print('asd')
 
         A = train_model.pdtype.sample_placeholder([None])
         ADV = tf.placeholder(tf.float32, [None])
