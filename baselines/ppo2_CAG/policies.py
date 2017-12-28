@@ -4,12 +4,13 @@ from baselines.a2c.utils import conv, fc, conv_to_fc, batch_to_seq, seq_to_batch
 from baselines.common.distributions import make_pdtype
 
 class LnLstmPolicy(object):
-    def __init__(self, sess, ob_space, ac_space, nbatch, nsteps, nlstm=256, reuse=False):
+    def __init__(self, sess, ob_space, ac_space, nbatch, nsteps, nlstm=512, reuse=False):
         nenv = nbatch // nsteps
         nh, nw, nc = ob_space.shape
         ob_shape = (nbatch, nh, nw, nc)
         nact = ac_space.n
         X = tf.placeholder(tf.float32, ob_shape) #obs
+        print(ob_shape)
         M = tf.placeholder(tf.float32, [nbatch]) #mask (done t-1)
         S = tf.placeholder(tf.float32, [nenv, nlstm*2]) #states
         with tf.variable_scope("model", reuse=reuse):
