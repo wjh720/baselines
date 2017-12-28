@@ -40,7 +40,7 @@ def train(env_id, num_timesteps, seed, policy):
     policy = {'cnn' : CnnPolicy, 'lstm' : LstmPolicy, 'lnlstm' : LnLstmPolicy}[policy]
     print('ab')
     ppo2.learn(policy=policy, env=env, nsteps=32, nminibatches=4,
-        lam=0.95, gamma=0.99, noptepochs=4, log_interval=1,
+        lam=0.95, gamma=0.99, noptepochs=4, log_interval=1, save_interval = 100
         ent_coef=.01,
         lr=lambda f : f * 2.5e-4,
         cliprange=lambda f : f * 0.1,

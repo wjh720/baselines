@@ -120,8 +120,10 @@ class Runner(object):
             self.obs[:], rewards, self.dones, infos = self.env.step(actions)
             for info in infos:
                 maybeepinfo = info.get('episode')
+                '''
                 if (maybeepinfo):
                     print(maybeepinfo)
+                '''
                 if maybeepinfo: epinfos.append(maybeepinfo)
             mb_rewards.append(rewards)
         #batch of steps to batch of rollouts
@@ -195,7 +197,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
     epinfobuf = deque(maxlen=100)
     tfirststart = time.time()
 
-    print('kai')
+    print('kai', logger.get_dir())
     print(total_timesteps, nbatch, nminibatches)
     nupdates = total_timesteps//nbatch
     for update in range(1, nupdates+1):
