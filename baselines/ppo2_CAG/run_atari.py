@@ -33,7 +33,7 @@ def train(env_id, num_timesteps, seed, policy):
             #return wrap_deepmind(env)
             return env
         return env_fn
-    nenvs = 16
+    nenvs = 2
     env = SubprocVecEnv([make_env(i) for i in range(nenvs)])
     set_global_seeds(seed)
     #env = VecFrameStack(env, 4)
