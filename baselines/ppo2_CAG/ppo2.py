@@ -188,6 +188,8 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
     epinfobuf = deque(maxlen=100)
     tfirststart = time.time()
 
+    print('kai')
+    print(total_timesteps, nbatch, nminibatches)
     nupdates = total_timesteps//nbatch
     for update in range(1, nupdates+1):
         print('wori')
