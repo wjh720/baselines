@@ -161,12 +161,13 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
     else: assert callable(cliprange)
     total_timesteps = int(total_timesteps)
 
+    print('jb')
     nenvs = env.num_envs
     ob_space = env.observation_space
     ac_space = env.action_space
     nbatch = nenvs * nsteps
     nbatch_train = nbatch // nminibatches
-
+    print('jb')
     make_model = lambda : Model(policy=policy, ob_space=ob_space, ac_space=ac_space, nbatch_act=nenvs, nbatch_train=nbatch_train, 
                     nsteps=nsteps, ent_coef=ent_coef, vf_coef=vf_coef,
                     max_grad_norm=max_grad_norm)
@@ -176,7 +177,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
             fh.write(cloudpickle.dumps(make_model))
     model = make_model()
     runner = Runner(env=env, model=model, nsteps=nsteps, gamma=gamma, lam=lam)
-
+    print('jb')
     epinfobuf = deque(maxlen=100)
     tfirststart = time.time()
 
