@@ -182,15 +182,15 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
             fh.write(cloudpickle.dumps(make_model))
     print('jb')
     model = make_model()
-    print('jb')
+    print('wori')
     runner = Runner(env=env, model=model, nsteps=nsteps, gamma=gamma, lam=lam)
-    print('jb')
+    print('wori')
     epinfobuf = deque(maxlen=100)
     tfirststart = time.time()
 
     nupdates = total_timesteps//nbatch
     for update in range(1, nupdates+1):
-        print('jb')
+        print('wori')
         assert nbatch % nminibatches == 0
         nbatch_train = nbatch // nminibatches
         tstart = time.time()
