@@ -8,8 +8,8 @@ def train(env_id, num_timesteps, seed, policy):
     from baselines.common.atari_wrappers import make_atari, wrap_deepmind
     from baselines.common.vec_env.subproc_vec_env import SubprocVecEnv
     from baselines.common.vec_env.vec_frame_stack import VecFrameStack
-    from baselines.ppo2 import ppo2
-    from baselines.ppo2.policies import CnnPolicy, LstmPolicy, LnLstmPolicy
+    from baselines.ppo2_CAG import ppo2
+    from baselines.ppo2_CAG.policies import CnnPolicy, LstmPolicy, LnLstmPolicy
     import gym, gym_CAG
     import logging
     import multiprocessing
