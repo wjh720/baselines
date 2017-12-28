@@ -117,7 +117,6 @@ class Runner(object):
                 maybeepinfo = info.get('episode')
                 if (maybeepinfo):
                     print(maybeepinfo)
-                    time.sleep(5)
                 if maybeepinfo: epinfos.append(maybeepinfo)
             mb_rewards.append(rewards)
         #batch of steps to batch of rollouts
