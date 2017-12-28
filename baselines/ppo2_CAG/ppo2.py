@@ -177,6 +177,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         with open(osp.join(logger.get_dir(), 'make_model.pkl'), 'wb') as fh:
             fh.write(cloudpickle.dumps(make_model))
     model = make_model()
+    print('jb')
     runner = Runner(env=env, model=model, nsteps=nsteps, gamma=gamma, lam=lam)
     print('jb')
     epinfobuf = deque(maxlen=100)
