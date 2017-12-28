@@ -8,6 +8,10 @@ from baselines.common.mpi_moments import mpi_moments
 from mpi4py import MPI
 from collections import deque
 
+env_iter = 0
+env_rewmean = -10000
+env_lenmean = 0
+
 def traj_segment_generator(pi, env, horizon, stochastic):
     t = 0
     ac = env.action_space.sample() # not used, just so we have the datatype
@@ -47,7 +51,9 @@ def traj_segment_generator(pi, env, horizon, stochastic):
         news[i] = new
         acs[i] = ac
         prevacs[i] = prevac
-
+        
+        env.seed((env_iter,env_rewmean,env_lenmean))
+        #print('PPO',env_iter)
         ob, rew, new, _ = env.step(ac)
         rews[i] = rew
 
@@ -204,12 +210,18 @@ def learn(env, policy_func, *,
         lens, rews = map(flatten_lists, zip(*listoflrpairs))
         lenbuffer.extend(lens)
         rewbuffer.extend(rews)
+        global env_lenmean
+        env_lenmean = np.mean(lenbuffer)
         logger.record_tabular("EpLenMean", np.mean(lenbuffer))
+        global env_rewmean
+        env_rewmean = np.mean(rewbuffer)
         logger.record_tabular("EpRewMean", np.mean(rewbuffer))
         logger.record_tabular("EpThisIter", len(lens))
         episodes_so_far += len(lens)
         timesteps_so_far += sum(lens)
         iters_so_far += 1
+        global env_iter
+        env_iter = iters_so_far
         logger.record_tabular("EpisodesSoFar", episodes_so_far)
         logger.record_tabular("TimestepsSoFar", timesteps_so_far)
         logger.record_tabular("TimeElapsed", time.time() - tstart)

@@ -6,7 +6,7 @@ from baselines import bench
 import os.path as osp
 import gym, logging, gym_CAG
 from baselines import logger
-from baselines.common.atari_wrappers import make_atari, wrap_deepmind
+#from baselines.common.atari_wrappers import make_atari, wrap_deepmind
 
 def train(env_id, num_timesteps, seed):
     from baselines.ppo_CAG import pposgd_simple_test, cnn_policy
@@ -26,15 +26,15 @@ def train(env_id, num_timesteps, seed):
         return cnn_policy.CnnPolicy(name=name, ob_space=ob_space, ac_space=ac_space)
     env = bench.Monitor(env, logger.get_dir() and
         osp.join(logger.get_dir(), str(rank)))
-    env.seed(workerseed)
+    #env.seed(workerseed)
     gym.logger.setLevel(logging.WARN)
 
     #env = wrap_deepmind(env)
-    env.seed(workerseed)
+    #env.seed(workerseed)
 
     pposgd_simple_test.learn(env, policy_fn,
         max_timesteps=int(num_timesteps * 1.1),
-        timesteps_per_actorbatch=40,
+        timesteps_per_actorbatch=1350,
         clip_param=0.2, entcoeff=0.01,
         optim_epochs=10, optim_stepsize=1e-3, optim_batchsize=32,
         gamma=0.99, lam=0.95,
