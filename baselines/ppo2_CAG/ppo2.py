@@ -176,6 +176,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         import cloudpickle
         with open(osp.join(logger.get_dir(), 'make_model.pkl'), 'wb') as fh:
             fh.write(cloudpickle.dumps(make_model))
+    print('jb')
     model = make_model()
     print('jb')
     runner = Runner(env=env, model=model, nsteps=nsteps, gamma=gamma, lam=lam)
