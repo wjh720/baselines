@@ -192,7 +192,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
     print(total_timesteps, nbatch, nminibatches)
     nupdates = total_timesteps//nbatch
     for update in range(1, nupdates+1):
-        print('wori')
+        print('iteration : %d' % update)
         assert nbatch % nminibatches == 0
         nbatch_train = nbatch // nminibatches
         tstart = time.time()
