@@ -8,6 +8,10 @@ from baselines import logger
 from collections import deque
 from baselines.common import explained_variance
 
+env_iter = 0
+env_rewmean = -10000
+env_lenmean = 0
+
 class Model(object):
     def __init__(self, *, policy, ob_space, ac_space, nbatch_act, nbatch_train,
                 nsteps, ent_coef, vf_coef, max_grad_norm):
@@ -111,7 +115,8 @@ class Runner(object):
             mb_actions.append(actions)
             mb_values.append(values)
             mb_neglogpacs.append(neglogpacs)
-            mb_dones.append(self.dones)            
+            mb_dones.append(self.dones)
+            self.env.seed((env_iter, env_rewmean, env_lenmean))
             self.obs[:], rewards, self.dones, infos = self.env.step(actions)
             for info in infos:
                 maybeepinfo = info.get('episode')
@@ -233,6 +238,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         tnow = time.time()
         fps = int(nbatch / (tnow - tstart))
         if update % log_interval == 0 or update == 1:
+            global env_lenmean, env_rewmean, env_iter
             ev = explained_variance(values, returns)
             logger.logkv("serial_timesteps", update*nsteps)
             logger.logkv("nupdates", update)
@@ -242,6 +248,11 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
             logger.logkv('eprewmean', safemean([epinfo['r'] for epinfo in epinfobuf]))
             logger.logkv('eplenmean', safemean([epinfo['l'] for epinfo in epinfobuf]))
             logger.logkv('time_elapsed', tnow - tfirststart)
+
+            env_iter = update
+            env_lenmean = safemean([epinfo['l'] for epinfo in epinfobuf])
+            env_rewmean = safemean([epinfo['r'] for epinfo in epinfobuf])
+
             for (lossval, lossname) in zip(lossvals, model.loss_names):
                 logger.logkv(lossname, lossval)
             logger.dumpkvs()
