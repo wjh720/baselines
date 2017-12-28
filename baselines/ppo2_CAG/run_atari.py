@@ -36,7 +36,7 @@ def train(env_id, num_timesteps, seed, policy):
     nenvs = 8
     env = SubprocVecEnv([make_env(i) for i in range(nenvs)])
     set_global_seeds(seed)
-    #env = VecFrameStack(env, 10)
+    #env = VecFrameStack(env, 4)
     policy = {'cnn' : CnnPolicy, 'lstm' : LstmPolicy, 'lnlstm' : LnLstmPolicy}[policy]
     print('ab')
     ppo2.learn(policy=policy, env=env, nsteps=128, nminibatches=4,
