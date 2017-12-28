@@ -4,7 +4,7 @@ from baselines.a2c.utils import conv, fc, conv_to_fc, batch_to_seq, seq_to_batch
 from baselines.common.distributions import make_pdtype
 
 class LnLstmPolicy(object):
-    def __init__(self, sess, ob_space, ac_space, nbatch, nsteps, nlstm=128, reuse=False):
+    def __init__(self, sess, ob_space, ac_space, nbatch, nsteps, nlstm=64, reuse=False):
         nenv = nbatch // nsteps
         nh, nw, nc = ob_space.shape
         ob_shape = (nbatch, nh, nw, nc)
@@ -17,7 +17,7 @@ class LnLstmPolicy(object):
             h2 = conv(h, 'c2', nf=64, rf=3, stride=1, init_scale=np.sqrt(2), pad="SAME")
             h3 = conv(h2, 'c3', nf=64, rf=3, stride=1, init_scale=np.sqrt(2), pad="SAME")
             h3 = conv_to_fc(h3)
-            h4 = fc(h3, 'fc1', nh=128, init_scale=np.sqrt(2))
+            h4 = fc(h3, 'fc1', nh=64, init_scale=np.sqrt(2))
             xs = batch_to_seq(h4, nenv, nsteps)
             ms = batch_to_seq(M, nenv, nsteps)
             h5, snew = lnlstm(xs, ms, S, 'lstm1', nh=nlstm)
