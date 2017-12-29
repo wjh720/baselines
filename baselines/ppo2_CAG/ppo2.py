@@ -210,9 +210,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         frac = 1.0 - (update - 1.0) / nupdates
         lrnow = lr(frac)
         cliprangenow = cliprange(frac)
-        print('cao')
         obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run() #pylint: disable=E0632
-        print('cao')
         epinfobuf.extend(epinfos)
         mblossvals = []
         if states is None: # nonrecurrent version
