@@ -318,7 +318,7 @@ def configure(dir=None, format_strs=None):
 
     rank = MPI.COMM_WORLD.Get_rank()
     if (rank != 0):
-        reutrn
+        return
     print('log!')
 
     if format_strs is None:
