@@ -53,7 +53,11 @@ def main():
     parser.add_argument('--policy', help='Policy architecture', choices=['cnn', 'lstm', 'lnlstm'], default='lnlstm')
     parser.add_argument('--num-timesteps', type=int, default=int(1e6))
     args = parser.parse_args()
-    logger.configure()
+    rank = MPI.COMM_WORLD.Get_rank()
+    if rank == 0:
+        logger.configure()
+    else:
+        logger.configure(format_strs=[])
     train(args.env, num_timesteps=args.num_timesteps, seed=args.seed,
         policy=args.policy)
 

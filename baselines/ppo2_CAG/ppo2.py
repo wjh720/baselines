@@ -17,11 +17,11 @@ class Model(object):
                 nsteps, ent_coef, vf_coef, max_grad_norm):
         sess = tf.get_default_session()
 
-        print('asd')
+        #print('asd')
         act_model = policy(sess, ob_space, ac_space, nbatch_act, 1, reuse=False)
-        print('asd')
+        #print('asd')
         train_model = policy(sess, ob_space, ac_space, nbatch_train, nsteps, reuse=True)
-        print('asd')
+        #print('asd')
 
         A = train_model.pdtype.sample_placeholder([None])
         ADV = tf.placeholder(tf.float32, [None])
@@ -33,7 +33,7 @@ class Model(object):
 
         neglogpac = train_model.pd.neglogp(A)
         entropy = tf.reduce_mean(train_model.pd.entropy())
-        print('asd')
+        #print('asd')
         vpred = train_model.vf
         vpredclipped = OLDVPRED + tf.clip_by_value(train_model.vf - OLDVPRED, - CLIPRANGE, CLIPRANGE)
         vf_losses1 = tf.square(vpred - R)
@@ -48,14 +48,14 @@ class Model(object):
         loss = pg_loss - entropy * ent_coef + vf_loss * vf_coef
         with tf.variable_scope('model'):
             params = tf.trainable_variables()
-        print('asd')
+        #print('asd')
         grads = tf.gradients(loss, params)
         if max_grad_norm is not None:
             grads, _grad_norm = tf.clip_by_global_norm(grads, max_grad_norm)
         grads = list(zip(grads, params))
         trainer = tf.train.AdamOptimizer(learning_rate=LR, epsilon=1e-5)
         _train = trainer.apply_gradients(grads)
-        print('asd')
+        #print('asd')
         def train(lr, cliprange, obs, returns, masks, actions, values, neglogpacs, states=None):
             advs = returns - values
             advs = (advs - advs.mean()) / (advs.std() + 1e-8)
@@ -177,26 +177,26 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
     else: assert callable(cliprange)
     total_timesteps = int(total_timesteps)
 
-    print('jb')
+    #print('jb')
     nenvs = env.num_envs
     ob_space = env.observation_space
     ac_space = env.action_space
     nbatch = nenvs * nsteps
     nbatch_train = nbatch // nminibatches
-    print('jb')
+    #print('jb')
     make_model = lambda : Model(policy=policy, ob_space=ob_space, ac_space=ac_space, nbatch_act=nenvs, nbatch_train=nbatch_train, 
                     nsteps=nsteps, ent_coef=ent_coef, vf_coef=vf_coef,
                     max_grad_norm=max_grad_norm)
-    print('jb')
+    #print('jb')
     if save_interval and logger.get_dir():
         import cloudpickle
         with open(osp.join(logger.get_dir(), 'make_model.pkl'), 'wb') as fh:
             fh.write(cloudpickle.dumps(make_model))
-    print('jb')
+    #print('jb')
     model = make_model()
-    print('wori')
+    #print('wori')
     runner = Runner(env=env, model=model, nsteps=nsteps, gamma=gamma, lam=lam)
-    print('wori')
+    #print('wori')
     epinfobuf = deque(maxlen=100)
     tfirststart = time.time()
 

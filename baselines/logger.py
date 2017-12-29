@@ -316,11 +316,6 @@ def configure(dir=None, format_strs=None):
     assert isinstance(dir, str)
     os.makedirs(dir, exist_ok=True)
 
-    rank = MPI.COMM_WORLD.Get_rank()
-    if (rank != 0):
-        return
-    print('log!')
-
     if format_strs is None:
         strs = os.getenv('OPENAI_LOG_FORMAT')
         format_strs = strs.split(',') if strs else LOG_OUTPUT_FORMATS
