@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 from baselines.a2c.utils import conv, fc, conv_to_fc, batch_to_seq, seq_to_batch, lstm, lnlstm
 from baselines.common.distributions import make_pdtype
+import baselines.common.tf_util as U
 
 class LnLstmPolicy(object):
     def __init__(self, sess, ob_space, ac_space, nbatch, nsteps, nlstm=512, reuse=False):
@@ -102,6 +103,7 @@ class CnnPolicy(object):
         nact = ac_space.n
         X = tf.placeholder(tf.float32, ob_shape) #obs
         with tf.variable_scope("model", reuse=reuse):
+            '''
             h = conv(X, 'c1', nf=64, rf=3, stride=1, init_scale=np.sqrt(2), pad="SAME")
             h2 = conv(h, 'c2', nf=64, rf=3, stride=1, init_scale=np.sqrt(2), pad="SAME")
             h3 = conv(h2, 'c3', nf=128, rf=3, stride=1, init_scale=np.sqrt(2), pad="SAME")
@@ -109,6 +111,16 @@ class CnnPolicy(object):
             h4 = fc(h3, 'fc1', nh=256, init_scale=np.sqrt(2))
             pi = fc(h4, 'pi', nact, act=lambda x:x, init_scale=0.01)
             vf = fc(h4, 'v', 1, act=lambda x:x)[:,0]
+            '''
+            x = tf.nn.relu(U.conv2d(X, 32, "l1", [3, 3], [1, 1], pad="SAME"))
+            x = tf.nn.relu(U.conv2d(x, 64, "l2", [3, 3], [1, 1], pad="SAME"))
+            x = tf.nn.relu(U.conv2d(x, 128, "l3", [3, 3], [1, 1], pad="SAME"))
+            x = U.flattenallbut0(x)
+            x = tf.nn.relu(U.dense(x, 512, 'lin', U.normc_initializer(1.0)))
+
+            logits = U.dense(x, pdtype.param_shape()[0], "logits", U.normc_initializer(0.01))
+            pi = pdtype.pdfromflat(logits)
+            vf = U.dense(y, 1, "value", U.normc_initializer(1.0))[:, 0]
 
         self.pdtype = make_pdtype(ac_space)
         self.pd = self.pdtype.pdfromflat(pi)
