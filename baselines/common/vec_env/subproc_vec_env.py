@@ -25,9 +25,7 @@ def worker(remote, parent_remote, env_fn_wrapper):
         elif cmd == 'get_spaces':
             remote.send((env.action_space, env.observation_space))
         elif cmd == 'seed':
-            print('23')
-            env.seed(data)
-            print('25')
+            env.seed(1)
             remote.send(None)
         else:
             raise NotImplementedError
