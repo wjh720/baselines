@@ -33,13 +33,13 @@ def train(env_id, num_timesteps, seed, policy):
             #return wrap_deepmind(env)
             return env
         return env_fn
-    nenvs = 32
+    nenvs = 8
     env = SubprocVecEnv([make_env(i) for i in range(nenvs)])
     set_global_seeds(seed)
     #env = VecFrameStack(env, 4)
     policy = {'cnn' : CnnPolicy, 'lstm' : LstmPolicy, 'lnlstm' : LnLstmPolicy}[policy]
     print('ab')
-    ppo2.learn(policy=policy, env=env, nsteps=64, nminibatches=16,
+    ppo2.learn(policy=policy, env=env, nsteps=64, nminibatches=8,
         lam=0.95, gamma=0.99, noptepochs=32, log_interval=1, save_interval = 100,
         ent_coef=.01,
         lr=lambda f : f * 2.5e-4,
