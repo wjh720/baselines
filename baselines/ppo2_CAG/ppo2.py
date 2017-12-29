@@ -196,7 +196,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
     #print('wori')
     runner = Runner(env=env, model=model, nsteps=nsteps, gamma=gamma, lam=lam)
     #print('wori')
-    epinfobuf = deque(maxlen=1000)
+    epinfobuf = deque(maxlen=100)
     tfirststart = time.time()
 
     print('kai', logger.get_dir())

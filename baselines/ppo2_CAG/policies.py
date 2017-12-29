@@ -122,8 +122,14 @@ class CnnPolicy(object):
             x = U.flattenallbut0(x)
             x = tf.nn.relu(U.dense(x, 512, 'lin', U.normc_initializer(1.0)))
 
+            y = tf.nn.relu(U.conv2d(X, 32, "yl1", [3, 3], [1, 1], pad="SAME"))
+            y = tf.nn.relu(U.conv2d(y, 64, "yl2", [3, 3], [1, 1], pad="SAME"))
+            y = tf.nn.relu(U.conv2d(y, 128, "yl3", [3, 3], [1, 1], pad="SAME"))
+            y = U.flattenallbut0(y)
+            y = tf.nn.relu(U.dense(y, 512, 'ylin', U.normc_initializer(1.0)))
+
             pi = U.dense(x, pdtype.param_shape()[0], "logits", U.normc_initializer(0.01))
-            vf = U.dense(x, 1, "value", U.normc_initializer(1.0))[:, 0]
+            vf = U.dense(y, 1, "value", U.normc_initializer(1.0))[:, 0]
 
         self.pd = self.pdtype.pdfromflat(pi)
 
