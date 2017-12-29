@@ -45,7 +45,12 @@ class Model(object):
         pg_loss = tf.reduce_mean(tf.maximum(pg_losses, pg_losses2))
         approxkl = .5 * tf.reduce_mean(tf.square(neglogpac - OLDNEGLOGPAC))
         clipfrac = tf.reduce_mean(tf.to_float(tf.greater(tf.abs(ratio - 1.0), CLIPRANGE)))
-        loss = pg_loss - entropy * ent_coef + vf_loss * vf_coef
+
+        vars = tf.trainable_variables()
+        lossL2 = tf.add_n([tf.nn.l2_loss(v) for v in vars
+                           if 'bias' not in v.name]) * 0.001
+
+        loss = pg_loss - entropy * ent_coef + vf_loss * vf_coef + lossL2
         with tf.variable_scope('model'):
             params = tf.trainable_variables()
         #print('asd')
