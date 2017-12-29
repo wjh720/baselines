@@ -104,7 +104,6 @@ class CnnPolicy(object):
         nact = ac_space.n
         X = tf.placeholder(tf.float32, ob_shape) #obs
         print(ob_shape)
-        time.sleep(10)
 
         self.pdtype = pdtype = make_pdtype(ac_space)
         with tf.variable_scope("model", reuse=reuse):
