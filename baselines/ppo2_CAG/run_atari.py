@@ -2,7 +2,6 @@
 import sys
 import argparse
 from baselines import bench, logger
-from mpi4py import MPI
 
 def train(env_id, num_timesteps, seed, policy):
     from baselines.common import set_global_seeds
@@ -54,11 +53,6 @@ def main():
     parser.add_argument('--policy', help='Policy architecture', choices=['cnn', 'lstm', 'lnlstm'], default='lnlstm')
     parser.add_argument('--num-timesteps', type=int, default=int(1e6))
     args = parser.parse_args()
-    rank = MPI.COMM_WORLD.Get_rank()
-    if rank == 0:
-        logger.configure()
-    else:
-        logger.configure(format_strs=[])
     train(args.env, num_timesteps=args.num_timesteps, seed=args.seed,
         policy=args.policy)
 
