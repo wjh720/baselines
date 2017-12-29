@@ -18,6 +18,8 @@ def traj_segment_generator(pi, env, horizon, stochastic):
     new = True # marks if we're on first timestep of an episode
     ob = env.reset()
 
+    print('fuck')
+
     cur_ep_ret = 0 # return in current episode
     cur_ep_len = 0 # len of current episode
     ep_rets = [] # returns of completed episodes in this segment
