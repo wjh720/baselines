@@ -2,6 +2,7 @@
 import sys
 import argparse
 from baselines import bench, logger
+from mpi4py import MPI
 
 def train(env_id, num_timesteps, seed, policy):
     from baselines.common import set_global_seeds
