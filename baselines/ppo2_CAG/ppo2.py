@@ -116,11 +116,8 @@ class Runner(object):
             mb_values.append(values)
             mb_neglogpacs.append(neglogpacs)
             mb_dones.append(self.dones)
-            print('djb')
             self.env.seed((env_iter, env_rewmean, env_lenmean))
-            print('djb')
             self.obs[:], rewards, self.dones, infos = self.env.step(actions)
-            print('djb')
             for info in infos:
                 maybeepinfo = info.get('episode')
                 '''
