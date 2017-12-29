@@ -25,7 +25,7 @@ def worker(remote, parent_remote, env_fn_wrapper):
         elif cmd == 'get_spaces':
             remote.send((env.action_space, env.observation_space))
         elif cmd == 'seed':
-            env.seed(1)
+            env.seed(data)
             remote.send(None)
         else:
             raise NotImplementedError
@@ -65,10 +65,8 @@ class SubprocVecEnv(VecEnv):
         self.action_space, self.observation_space = self.remotes[0].recv()
 
     def seed(self, seed):
-        print('nmb')
         for remote in self.remotes:
             remote.send(('seed', seed))
-        print('nmb2')
         return np.stack([remote.recv() for remote in self.remotes])
 
     def step(self, actions):
