@@ -68,6 +68,7 @@ class SubprocVecEnv(VecEnv):
         print('nmb')
         for remote in self.remotes:
             remote.send(('seed', seed))
+        print('nmb2')
         return np.stack([remote.recv() for remote in self.remotes])
 
     def step(self, actions):
