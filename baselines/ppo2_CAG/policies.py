@@ -102,6 +102,8 @@ class CnnPolicy(object):
         ob_shape = (nbatch, nh, nw, nc)
         nact = ac_space.n
         X = tf.placeholder(tf.float32, ob_shape) #obs
+
+        self.pdtype = pdtype = make_pdtype(ac_space)
         with tf.variable_scope("model", reuse=reuse):
             '''
             h = conv(X, 'c1', nf=64, rf=3, stride=1, init_scale=np.sqrt(2), pad="SAME")
@@ -118,11 +120,9 @@ class CnnPolicy(object):
             x = U.flattenallbut0(x)
             x = tf.nn.relu(U.dense(x, 512, 'lin', U.normc_initializer(1.0)))
 
-            logits = U.dense(x, pdtype.param_shape()[0], "logits", U.normc_initializer(0.01))
-            pi = pdtype.pdfromflat(logits)
+            pi = U.dense(x, pdtype.param_shape()[0], "logits", U.normc_initializer(0.01))
             vf = U.dense(y, 1, "value", U.normc_initializer(1.0))[:, 0]
 
-        self.pdtype = make_pdtype(ac_space)
         self.pd = self.pdtype.pdfromflat(pi)
 
         a0 = self.pd.sample()
