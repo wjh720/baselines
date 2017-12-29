@@ -121,7 +121,7 @@ class CnnPolicy(object):
             x = tf.nn.relu(U.dense(x, 512, 'lin', U.normc_initializer(1.0)))
 
             pi = U.dense(x, pdtype.param_shape()[0], "logits", U.normc_initializer(0.01))
-            vf = U.dense(y, 1, "value", U.normc_initializer(1.0))[:, 0]
+            vf = U.dense(x, 1, "value", U.normc_initializer(1.0))[:, 0]
 
         self.pd = self.pdtype.pdfromflat(pi)
 
