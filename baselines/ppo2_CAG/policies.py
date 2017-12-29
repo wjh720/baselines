@@ -152,13 +152,14 @@ class CnnPolicy(object):
 
 
         self.pd = self.pdtype.pdfromflat(pi)
+        self.pdps = self.pd.ps
 
         a0 = self.pd.sample()
         neglogp0 = self.pd.neglogp(a0)
         self.initial_state = None
 
         def step(ob, *_args, **_kwargs):
-            pp, a, v, neglogp = sess.run([pi, a0, vf, neglogp0], {X:ob})
+            pp, a, v, neglogp = sess.run([self.pdps, a0, vf, neglogp0], {X:ob})
             print(pp)
             time.sleep(1)
             return a, v, self.initial_state, neglogp
