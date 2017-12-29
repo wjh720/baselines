@@ -112,8 +112,6 @@ class Runner(object):
         self.dones = [False for _ in range(nenv)]
 
     def run(self):
-        print('fuck')
-        time.sleep(5)
         mb_obs, mb_rewards, mb_actions, mb_values, mb_dones, mb_neglogpacs = [],[],[],[],[],[]
         mb_states = self.states
         epinfos = []
@@ -219,6 +217,8 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         lrnow = lr(frac)
         cliprangenow = cliprange(frac)
         obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run() #pylint: disable=E0632
+        print(obs)
+        time.sleep(3)
         epinfobuf.extend(epinfos)
         mblossvals = []
         if states is None: # nonrecurrent version
