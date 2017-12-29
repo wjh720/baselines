@@ -17,6 +17,9 @@ class CnnPolicy(object):
         sequence_length = None
 
         ob = U.get_placeholder(name="ob", dtype=tf.float32, shape=[sequence_length] + list(ob_space.shape))
+
+        print(ob_space.shape)
+        time.sleep(5)
     
         x = ob
         if kind == 'small': # from A3C paper
