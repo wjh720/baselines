@@ -65,6 +65,7 @@ class SubprocVecEnv(VecEnv):
         self.action_space, self.observation_space = self.remotes[0].recv()
 
     def seed(self, seed):
+        print('nmb')
         for remote in self.remotes:
             remote.send(('seed', seed))
         return np.stack([remote.recv() for remote in self.remotes])
