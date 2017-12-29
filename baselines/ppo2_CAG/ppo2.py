@@ -52,6 +52,14 @@ class Model(object):
                            if 'bias' not in v.name]) * 0.001
         '''
         loss = pg_loss - entropy * ent_coef + vf_loss * vf_coef
+
+        '''
+        tf.summary.scalar('loss', loss)
+        tf.summary.scalar('clipfrac', clipfrac)
+        tf.summary.scalar('approxkl', approxkl)
+        tf.summary.scalar('approxkl', approxkl)
+        '''
+
         with tf.variable_scope('model'):
             params = tf.trainable_variables()
         #print('asd')
@@ -75,6 +83,10 @@ class Model(object):
                 td_map
             )[:-1]
         self.loss_names = ['policy_loss', 'value_loss', 'policy_entropy', 'approxkl', 'clipfrac']
+
+
+        #writer = tf.summary.FileWriter('./log', sess.graph)
+        #merge_op = tf.summary.merge_all()
 
         def save(save_path):
             ps = sess.run(params)
