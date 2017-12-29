@@ -2,6 +2,7 @@ import baselines.common.tf_util as U
 import tensorflow as tf
 import gym
 from baselines.common.distributions import make_pdtype
+import time
 
 class CnnPolicy(object):
     recurrent = False
