@@ -51,7 +51,7 @@ class Model(object):
         lossL2 = tf.add_n([tf.nn.l2_loss(v) for v in vars
                            if 'bias' not in v.name]) * 0.001
         '''
-        loss = pg_loss - entropy * ent_coef + vf_loss * vf_coef + lossL2
+        loss = pg_loss - entropy * ent_coef + vf_loss * vf_coef
         with tf.variable_scope('model'):
             params = tf.trainable_variables()
         #print('asd')
