@@ -16,17 +16,29 @@ class LnLstmPolicy(object):
         M = tf.placeholder(tf.float32, [nbatch]) #mask (done t-1)
         S = tf.placeholder(tf.float32, [nenv, nlstm*2]) #states
         with tf.variable_scope("model", reuse=reuse):
-            h = conv(X, 'c1', nf=64, rf=3, stride=1, init_scale=np.sqrt(2), pad="SAME")
-            h2 = conv(h, 'c2', nf=128, rf=3, stride=1, init_scale=np.sqrt(2), pad="SAME")
-            h3 = conv(h2, 'c3', nf=256, rf=3, stride=1, init_scale=np.sqrt(2), pad="SAME")
-            h3 = conv_to_fc(h3)
-            h4 = fc(h3, 'fc1', nh=512, init_scale=np.sqrt(2))
-            xs = batch_to_seq(h4, nenv, nsteps)
-            ms = batch_to_seq(M, nenv, nsteps)
-            h5, snew = lnlstm(xs, ms, S, 'lstm1', nh=nlstm)
-            h5 = seq_to_batch(h5)
-            pi = fc(h5, 'pi', nact, act=lambda x:x)
-            vf = fc(h5, 'v', 1, act=lambda x:x)
+            with tf.variable_scope("pi"):
+                h = conv(X, 'c1', nf=64, rf=3, stride=1, init_scale=np.sqrt(2), pad="SAME")
+                h2 = conv(h, 'c2', nf=128, rf=3, stride=1, init_scale=np.sqrt(2), pad="SAME")
+                h3 = conv(h2, 'c3', nf=256, rf=3, stride=1, init_scale=np.sqrt(2), pad="SAME")
+                h3 = conv_to_fc(h3)
+                h4 = fc(h3, 'fc1', nh=512, init_scale=np.sqrt(2))
+                xs = batch_to_seq(h4, nenv, nsteps)
+                ms = batch_to_seq(M, nenv, nsteps)
+                h5, snew = lnlstm(xs, ms, S, 'lstm1', nh=nlstm)
+                h5 = seq_to_batch(h5)
+                pi = fc(h5, 'pi', nact, act=lambda x:x)
+
+            with tf.variable_scope("vf"):
+                h = conv(X, 'c1', nf=64, rf=3, stride=1, init_scale=np.sqrt(2), pad="SAME")
+                h2 = conv(h, 'c2', nf=128, rf=3, stride=1, init_scale=np.sqrt(2), pad="SAME")
+                h3 = conv(h2, 'c3', nf=256, rf=3, stride=1, init_scale=np.sqrt(2), pad="SAME")
+                h3 = conv_to_fc(h3)
+                h4 = fc(h3, 'fc1', nh=512, init_scale=np.sqrt(2))
+                xs = batch_to_seq(h4, nenv, nsteps)
+                ms = batch_to_seq(M, nenv, nsteps)
+                h5, snew = lnlstm(xs, ms, S, 'lstm1', nh=nlstm)
+                h5 = seq_to_batch(h5)
+                vf = fc(h5, 'v', 1, act=lambda x:x)
 
         self.pdtype = make_pdtype(ac_space)
         self.pd = self.pdtype.pdfromflat(pi)
@@ -107,7 +119,7 @@ class CnnPolicy(object):
 
         self.pdtype = pdtype = make_pdtype(ac_space)
         with tf.variable_scope("model", reuse=reuse):
-
+            '''
             h = conv(X, 'c1', nf=64, rf=3, stride=1, init_scale=np.sqrt(2), pad="SAME")
             h2 = conv(h, 'c2', nf=64, rf=3, stride=1, init_scale=np.sqrt(2), pad="SAME")
             h3 = conv(h2, 'c3', nf=128, rf=3, stride=1, init_scale=np.sqrt(2), pad="SAME")
@@ -137,7 +149,7 @@ class CnnPolicy(object):
 
             pi = U.dense(x, pdtype.param_shape()[0], "logits", U.normc_initializer(0.01))
             vf = U.dense(y, 1, "value", U.normc_initializer(1.0))[:, 0]
-            '''
+
 
         self.pd = self.pdtype.pdfromflat(pi)
 
