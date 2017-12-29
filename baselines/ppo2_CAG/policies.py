@@ -158,7 +158,9 @@ class CnnPolicy(object):
         self.initial_state = None
 
         def step(ob, *_args, **_kwargs):
-            a, v, neglogp = sess.run([a0, vf, neglogp0], {X:ob})
+            pp, a, v, neglogp = sess.run([pi, a0, vf, neglogp0], {X:ob})
+            print(pp)
+            time.sleep(1)
             return a, v, self.initial_state, neglogp
 
         def value(ob, *_args, **_kwargs):
