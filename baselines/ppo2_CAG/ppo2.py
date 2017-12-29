@@ -112,6 +112,8 @@ class Runner(object):
         self.dones = [False for _ in range(nenv)]
 
     def run(self):
+        print('fuck')
+        time.sleep(5)
         mb_obs, mb_rewards, mb_actions, mb_values, mb_dones, mb_neglogpacs = [],[],[],[],[],[]
         mb_states = self.states
         epinfos = []
