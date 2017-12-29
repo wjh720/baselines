@@ -152,7 +152,6 @@ class CnnPolicy(object):
 
 
         self.pd = self.pdtype.pdfromflat(pi)
-        self.pdps = self.pd.ps
 
         a0 = self.pd.sample()
         neglogp0 = self.pd.neglogp(a0)
