@@ -213,7 +213,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
     #print('jb')
     model = make_model()
     #print('wori')
-    runner = Runner(env=env, model=model, nsteps=nsteps, gamma=gamma, lam=lam, mpi_id=MPI.COMM_WORLD.Get_rank())
+    runner = Runner(env=env, model=model, nsteps=nsteps, gamma=gamma, lam=lam)
     #print('wori')
     epinfobuf = deque(maxlen=100)
     tfirststart = time.time()
@@ -229,7 +229,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         frac = 1.0 - (update - 1.0) / nupdates
         lrnow = lr(frac)
         cliprangenow = cliprange(frac)
-        obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run() #pylint: disable=E0632
+        obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run(MPI.COMM_WORLD.Get_rank()) #pylint: disable=E0632
         print(obs.shape)
         epinfobuf.extend(epinfos)
         mblossvals = []
