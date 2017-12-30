@@ -152,7 +152,7 @@ def learn(env, policy_func, *,
     if (flag_load > 0):
         data_path = '/home/icenter/tmp/openai_data/para_%i/' % (flag_load / 100)
         U.load_state(data_path + 'para')
-        
+
     while True:
         if callback: callback(locals(), globals())
         if max_timesteps and timesteps_so_far >= max_timesteps:
