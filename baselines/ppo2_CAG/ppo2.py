@@ -124,7 +124,7 @@ class Runner(object):
         self.states = model.initial_state
         self.dones = [False for _ in range(nenv)]
 
-    def run(self, mpi_id):
+    def run(self):
         mb_obs, mb_rewards, mb_actions, mb_values, mb_dones, mb_neglogpacs = [],[],[],[],[],[]
         mb_states = self.states
         epinfos = []
@@ -136,7 +136,7 @@ class Runner(object):
             mb_neglogpacs.append(neglogpacs)
             mb_dones.append(self.dones)
 
-            self.env.seed((mpi_id, env_iter, env_rewmean, env_lenmean))
+            self.env.seed((env_iter, env_rewmean, env_lenmean))
 
             self.obs[:], rewards, self.dones, infos = self.env.step(actions)
             for info in infos:
@@ -229,7 +229,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         frac = 1.0 - (update - 1.0) / nupdates
         lrnow = lr(frac)
         cliprangenow = cliprange(frac)
-        obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run(MPI.COMM_WORLD.Get_rank()) #pylint: disable=E0632
+        obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run() #pylint: disable=E0632
         print(obs.shape)
         epinfobuf.extend(epinfos)
         mblossvals = []

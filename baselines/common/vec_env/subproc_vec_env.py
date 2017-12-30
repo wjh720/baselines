@@ -65,8 +65,10 @@ class SubprocVecEnv(VecEnv):
         self.action_space, self.observation_space = self.remotes[0].recv()
 
     def seed(self, seed):
+        flag = 0
         for remote in self.remotes:
-            remote.send(('seed', seed))
+            remote.send(('seed', (flag,) + seed))
+            flag = 1
         return np.stack([remote.recv() for remote in self.remotes])
 
     def step(self, actions):
