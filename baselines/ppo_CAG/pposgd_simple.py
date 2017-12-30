@@ -92,6 +92,7 @@ def learn(env, policy_func, *,
         max_timesteps=0, max_episodes=0, max_iters=0, max_seconds=0,  # time constraint
         callback=None, # you can do anything in the callback, since it takes locals(), globals()
         adam_epsilon=1e-5,
+        flag_load=-1,
         schedule='constant' # annealing for stepsize parameters (epsilon and adam)
         ):
     # Setup losses and stuff
@@ -148,6 +149,10 @@ def learn(env, policy_func, *,
 
     assert sum([max_iters>0, max_timesteps>0, max_episodes>0, max_seconds>0])==1, "Only one time constraint permitted"
 
+    if (flag_load > 0):
+        data_path = '/home/icenter/tmp/openai_data/para_%i/' % (flag_load / 100)
+        U.load_state(data_path + 'para')
+        
     while True:
         if callback: callback(locals(), globals())
         if max_timesteps and timesteps_so_far >= max_timesteps:
@@ -171,6 +176,8 @@ def learn(env, policy_func, *,
         if (iters_so_far % 10 == 0):
             data_path = '/home/icenter/tmp/openai_data/para_%i/' % (iters_so_far / 100)
             U.save_state(data_path + 'para')
+
+
 
         seg = seg_gen.__next__()
         add_vtarg_and_adv(seg, gamma, lam)
