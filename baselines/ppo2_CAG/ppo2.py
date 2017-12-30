@@ -7,6 +7,7 @@ import tensorflow as tf
 from baselines import logger
 from collections import deque
 from baselines.common import explained_variance
+from mpi4py import MPI
 
 env_iter = 0
 env_rewmean = -10000
@@ -123,7 +124,7 @@ class Runner(object):
         self.states = model.initial_state
         self.dones = [False for _ in range(nenv)]
 
-    def run(self):
+    def run(self, mpi_id):
         mb_obs, mb_rewards, mb_actions, mb_values, mb_dones, mb_neglogpacs = [],[],[],[],[],[]
         mb_states = self.states
         epinfos = []
@@ -135,7 +136,7 @@ class Runner(object):
             mb_neglogpacs.append(neglogpacs)
             mb_dones.append(self.dones)
 
-            self.env.seed((env_iter, env_rewmean, env_lenmean))
+            self.env.seed((mpi_id, env_iter, env_rewmean, env_lenmean))
 
             self.obs[:], rewards, self.dones, infos = self.env.step(actions)
             for info in infos:
@@ -212,7 +213,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
     #print('jb')
     model = make_model()
     #print('wori')
-    runner = Runner(env=env, model=model, nsteps=nsteps, gamma=gamma, lam=lam)
+    runner = Runner(env=env, model=model, nsteps=nsteps, gamma=gamma, lam=lam, mpi_id=MPI.COMM_WORLD.Get_rank())
     #print('wori')
     epinfobuf = deque(maxlen=100)
     tfirststart = time.time()
