@@ -34,11 +34,11 @@ def train(env_id, num_timesteps, seed):
 
     pposgd_simple.learn(env, policy_fn,
         max_timesteps=int(num_timesteps * 1.1),
-        timesteps_per_actorbatch=256,
+        timesteps_per_actorbatch=32,
         clip_param=0.2, entcoeff=0.01,
-        optim_epochs=10, optim_stepsize=1e-3, optim_batchsize=256,
+        optim_epochs=10, optim_stepsize=1e-3, optim_batchsize=32,
         gamma=0.99, lam=0.95,
-        flag_load=290,
+        flag_load=10,
         schedule='linear'
     )
     env.close()
@@ -48,7 +48,7 @@ def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--env', help='environment ID', default='PongNoFrameskip-v4')
     parser.add_argument('--seed', help='RNG seed', type=int, default=0)
-    parser.add_argument('--num-timesteps', type=int, default=int(1e6))
+    parser.add_argument('--num-timesteps', type=int, default=int(1e8))
     args = parser.parse_args()
     train(args.env, num_timesteps=args.num_timesteps, seed=args.seed)
 
