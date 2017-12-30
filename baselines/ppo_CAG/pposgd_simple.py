@@ -150,10 +150,10 @@ def learn(env, policy_func, *,
     assert sum([max_iters>0, max_timesteps>0, max_episodes>0, max_seconds>0])==1, "Only one time constraint permitted"
 
     if (flag_load > 0):
-        print('Loading!')
-        time.sleep(3)
         data_path = '/home/icenter/tmp/openai_data/para_%i/' % (flag_load // 100)
         U.load_state(data_path + 'para')
+        print('Loading!')
+        time.sleep(3)
 
     while True:
         if callback: callback(locals(), globals())
