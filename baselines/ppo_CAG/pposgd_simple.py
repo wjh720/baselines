@@ -8,11 +8,12 @@ from baselines.common.mpi_moments import mpi_moments
 from mpi4py import MPI
 from collections import deque
 
+
 env_iter = 0
 env_rewmean = -10000
 env_lenmean = 0
 
-def traj_segment_generator(pi, env, horizon, stochastic):
+def traj_segment_generator(pi, env, horizon, mpi_id, stochastic):
     t = 0
     ac = env.action_space.sample() # not used, just so we have the datatype
     new = True # marks if we're on first timestep of an episode
@@ -52,7 +53,7 @@ def traj_segment_generator(pi, env, horizon, stochastic):
         acs[i] = ac
         prevacs[i] = prevac
         
-        env.seed((env_iter,env_rewmean,env_lenmean))
+        env.seed((mpi_id, env_iter,env_rewmean,env_lenmean))
         #print('PPO',env_iter)
         ob, rew, new, _ = env.step(ac)
         rews[i] = rew
@@ -136,7 +137,7 @@ def learn(env, policy_func, *,
 
     # Prepare for rollouts
     # ----------------------------------------
-    seg_gen = traj_segment_generator(pi, env, timesteps_per_actorbatch, stochastic=True)
+    seg_gen = traj_segment_generator(pi, env, timesteps_per_actorbatch, MPI.COMM_WORLD.Get_rank(), stochastic=True)
 
     episodes_so_far = 0
     timesteps_so_far = 0
