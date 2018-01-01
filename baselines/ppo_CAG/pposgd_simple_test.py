@@ -12,7 +12,6 @@ def test(pi, env, horizon, stochastic):
     while True:
         ob = env.reset()
         print(ob.shape)
-        time.sleep(3)
         for t in range(1000):
             time.sleep(0.3)
             env.render()
