@@ -26,7 +26,7 @@ class CnnPolicy(object):
             x = U.flattenallbut0(x)
             x = tf.nn.relu(U.dense(x, 256, 'lin', U.normc_initializer(1.0)))
         elif kind == 'large': # Nature DQN
-            x = tf.nn.relu(U.conv2d(x, 32, "l1", [8, 8], [4, 4], pad="SAME"))
+            x = tf.nn.relu(U.conv2d(x, 32, "l1", [8, 8], [2, 2], pad="SAME"))
             x = tf.nn.relu(U.conv2d(x, 64, "l2", [4, 4], [2, 2], pad="SAME"))
             x = tf.nn.relu(U.conv2d(x, 64, "l3", [3, 3], [1, 1], pad="SAME"))
             x = U.flattenallbut0(x)
@@ -41,7 +41,7 @@ class CnnPolicy(object):
             y = U.flattenallbut0(y)
             y = tf.nn.relu(U.dense(y, 256, 'ylin', U.normc_initializer(1.0)))
         elif kind == 'large':  # Nature DQN
-            y = tf.nn.relu(U.conv2d(y, 32, "yl1", [8, 8], [4, 4], pad="SAME"))
+            y = tf.nn.relu(U.conv2d(y, 32, "yl1", [8, 8], [2, 2], pad="SAME"))
             y = tf.nn.relu(U.conv2d(y, 64, "yl2", [4, 4], [2, 2], pad="SAME"))
             y = tf.nn.relu(U.conv2d(y, 64, "yl3", [3, 3], [1, 1], pad="SAME"))
             y = U.flattenallbut0(y)
