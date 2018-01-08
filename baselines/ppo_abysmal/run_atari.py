@@ -4,12 +4,12 @@ from mpi4py import MPI
 from baselines.common import set_global_seeds
 from baselines import bench
 import os.path as osp
-import gym, logging, gym_CAG
+import gym, logging, Abysmal
 from baselines import logger
 from baselines.common.atari_wrappers import make_atari, wrap_deepmind
 
 def train(env_id, num_timesteps, seed):
-    from baselines.ppo_CAG import pposgd_simple, cnn_policy
+    from baselines.ppo_abysmal import pposgd_simple, cnn_policy
     import baselines.common.tf_util as U
     rank = MPI.COMM_WORLD.Get_rank()
     sess = U.single_threaded_session()
@@ -21,7 +21,7 @@ def train(env_id, num_timesteps, seed):
     workerseed = seed + 10000 * MPI.COMM_WORLD.Get_rank()
     set_global_seeds(workerseed)
     #env = make_atari(env_id)
-    env = gym.make('CAG-v0')
+    env = gym.make('Abysmal-v0')
     def policy_fn(name, ob_space, ac_space): #pylint: disable=W0613
         return cnn_policy.CnnPolicy(name=name, ob_space=ob_space, ac_space=ac_space)
     env = bench.Monitor(env, logger.get_dir() and
@@ -34,11 +34,11 @@ def train(env_id, num_timesteps, seed):
 
     pposgd_simple.learn(env, policy_fn,
         max_timesteps=int(num_timesteps * 1.1),
-        timesteps_per_actorbatch=128,
+        timesteps_per_actorbatch=16,
         clip_param=0.2, entcoeff=0.01,
-        optim_epochs=10, optim_stepsize=1e-3, optim_batchsize=128,
+        optim_epochs=10, optim_stepsize=1e-3, optim_batchsize=16,
         gamma=0.99, lam=0.95,
-        flag_load=20000,
+        flag_load=-1,
         schedule='linear'
     )
     env.close()
