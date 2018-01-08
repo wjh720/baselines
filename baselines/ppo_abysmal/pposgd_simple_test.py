@@ -13,7 +13,7 @@ def test(pi, env, horizon, stochastic):
         ob = env.reset()
         #print(ob.shape)
         for t in range(1000):
-            time.sleep(0.3)
+            time.sleep(0.6)
             env.render()
             ac, vpred = pi.act(stochastic, ob)
             ob, rew, new, _ = env.step(ac)
