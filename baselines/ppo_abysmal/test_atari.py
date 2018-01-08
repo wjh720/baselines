@@ -4,7 +4,7 @@ from mpi4py import MPI
 from baselines.common import set_global_seeds
 from baselines import bench
 import os.path as osp
-import gym, logging, gym_CAG
+import gym, logging, Abysmal
 from baselines import logger
 #from baselines.common.atari_wrappers import make_atari, wrap_deepmind
 
@@ -21,7 +21,7 @@ def train(env_id, num_timesteps, seed):
     workerseed = seed + 10000 * MPI.COMM_WORLD.Get_rank()
     set_global_seeds(workerseed)
     #env = make_atari(env_id)
-    env = gym.make('CAG-v0')
+    env = gym.make('Abysmal-v0')
     def policy_fn(name, ob_space, ac_space): #pylint: disable=W0613
         return cnn_policy.CnnPolicy(name=name, ob_space=ob_space, ac_space=ac_space)
     env = bench.Monitor(env, logger.get_dir() and
@@ -34,7 +34,7 @@ def train(env_id, num_timesteps, seed):
 
     pposgd_simple_test.learn(env, policy_fn,
         max_timesteps=int(num_timesteps * 1.1),
-        timesteps_per_actorbatch=200,
+        timesteps_per_actorbatch=0,
         clip_param=0.2, entcoeff=0.01,
         optim_epochs=10, optim_stepsize=1e-3, optim_batchsize=32,
         gamma=0.99, lam=0.95,
