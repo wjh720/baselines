@@ -34,6 +34,7 @@ class CnnPolicy(object):
         else:
             raise NotImplementedError
 
+        '''
         y = ob / 255.0
         if kind == 'small':  # from A3C paper
             y = tf.nn.relu(U.conv2d(y, 16, "yl1", [3, 3], [1, 1], pad="SAME"))
@@ -48,10 +49,11 @@ class CnnPolicy(object):
             y = tf.nn.relu(U.dense(y, 512, 'ylin', U.normc_initializer(1.0)))
         else:
             raise NotImplementedError
+        '''
 
         logits = U.dense(x, pdtype.param_shape()[0], "logits", U.normc_initializer(0.01))
         self.pd = pdtype.pdfromflat(logits)
-        self.vpred = U.dense(y, 1, "value", U.normc_initializer(1.0))[:,0]
+        self.vpred = U.dense(x, 1, "value", U.normc_initializer(1.0))[:,0]
 
         self.state_in = []
         self.state_out = []
