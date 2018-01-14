@@ -24,7 +24,7 @@ class Capsule_policy(object):
         sequence_length = cfg.batch_size
 
         ob = U.get_placeholder(name="ob", dtype=tf.float32, shape=[sequence_length] + list(ob_space.shape))
-        self.X = ob
+        self.X = ob / 255.
 
         epsilon = 1e-8
 
