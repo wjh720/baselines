@@ -24,6 +24,7 @@ class Capsule_policy(object):
         sequence_length = cfg.batch_size
 
         ob = U.get_placeholder(name="ob", dtype=tf.float32, shape=[sequence_length] + list(ob_space.shape))
+        self.X = ob
 
         epsilon = 1e-8
 
@@ -138,6 +139,10 @@ class Capsule_policy(object):
         self.vpred = U.dense(y, 1, "value", U.normc_initializer(1.0))[:, 0]
         #self.vpred = caps2 * 100
         #U.dense(y, 1, "value", U.normc_initializer(1.0))[:,0]
+
+        orgin = tf.reshape(self.X, shape=(cfg.batch_size, -1))
+        squared = tf.square(self.decoded - orgin)
+        self.reconstruction_err = tf.reduce_mean(squared)
 
         self.state_in = []
         self.state_out = []

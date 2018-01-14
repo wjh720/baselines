@@ -121,9 +121,9 @@ def learn(env, policy_func, *,
     surr2 = U.clip(ratio, 1.0 - clip_param, 1.0 + clip_param) * atarg #
     pol_surr = - U.mean(tf.minimum(surr1, surr2)) # PPO's pessimistic surrogate (L^CLIP)
     vf_loss = U.mean(tf.square(pi.vpred - ret))
-    total_loss = pol_surr + pol_entpen + vf_loss
-    losses = [pol_surr, pol_entpen, vf_loss, meankl, meanent]
-    loss_names = ["pol_surr", "pol_entpen", "vf_loss", "kl", "ent"]
+    total_loss = pol_surr + pol_entpen + vf_loss + pi.reconstruction_err
+    losses = [pol_surr, pol_entpen, vf_loss, meankl, meanent, pi.reconstruction_err]
+    loss_names = ["pol_surr", "pol_entpen", "vf_loss", "kl", "ent", "reconstrction_err"]
 
     var_list = pi.get_trainable_variables()
     lossandgrad = U.function([ob, ac, atarg, ret, lrmult], losses + [U.flatgrad(total_loss, var_list)])
