@@ -104,7 +104,8 @@ def learn(env, policy_func, *,
     assert sum([max_iters>0, max_timesteps>0, max_episodes>0, max_seconds>0])==1, "Only one time constraint permitted"
 
     while True:
-        data_path = '/Users/wjh720/Desktop/Tmp/para_%i/' % (timesteps_per_actorbatch / 100)
+        #data_path = '/Users/wjh720/Desktop/Tmp/para_%i/' % (timesteps_per_actorbatch / 100)
+        data_path = '/home/icenter/tmp/openai_data/para_%i/' % (iters_so_far // 100)
         U.load_state(data_path + 'para')
 
         test(pi, env, timesteps_per_actorbatch, stochastic=True)
