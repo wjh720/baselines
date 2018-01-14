@@ -7,9 +7,10 @@ import os.path as osp
 import gym, logging, Abysmal
 from baselines import logger
 from baselines.common.atari_wrappers import make_atari, wrap_deepmind
+from config import cfg
 
 def train(env_id, num_timesteps, seed):
-    from baselines.ppo_abysmal import mlp_policy, pposgd_simple, cnn_policy
+    from baselines.ppo_abysmal import mlp_policy, pposgd_simple, cnn_policy, capsule_policy
     import baselines.common.tf_util as U
     rank = MPI.COMM_WORLD.Get_rank()
     sess = U.single_threaded_session()
@@ -24,7 +25,8 @@ def train(env_id, num_timesteps, seed):
     env = gym.make('Abysmal-v0')
     def policy_fn(name, ob_space, ac_space): #pylint: disable=W0613
         #return mlp_policy.MlpPolicy(name=name, ob_space=ob_space, ac_space=ac_space, hid_size=256, num_hid_layers=4)
-        return cnn_policy.CnnPolicy(name=name, ob_space=ob_space, ac_space=ac_space)
+        #return cnn_policy.CnnPolicy(name=name, ob_space=ob_space, ac_space=ac_space)
+        return capsule_policy.Capsule_policy(name=name, ob_space=ob_space, ac_space=ac_space)
     env = bench.Monitor(env, logger.get_dir() and
         osp.join(logger.get_dir(), str(rank)))
     #env.seed(workerseed)
@@ -35,9 +37,9 @@ def train(env_id, num_timesteps, seed):
 
     pposgd_simple.learn(env, policy_fn,
         max_timesteps=int(num_timesteps * 1.1),
-        timesteps_per_actorbatch=4,
+        timesteps_per_actorbatch=cfg.batch_size,
         clip_param=0.2, entcoeff=0.01,
-        optim_epochs=10, optim_stepsize=1e-3, optim_batchsize=4,
+        optim_epochs=10, optim_stepsize=1e-3, optim_batchsize=cfg.batch_size,
         gamma=0.99, lam=0.95,
         flag_load=-1,
         schedule='linear'
