@@ -24,8 +24,7 @@ def train(env_id, num_timesteps, seed):
     env = gym.make('Abysmal-v0')
     def policy_fn(name, ob_space, ac_space): #pylint: disable=W0613
         return capsule_policy.Capsule_policy(name=name, ob_space=ob_space, ac_space=ac_space)
-        #return mlp_policy.MlpPolicy(name=name, ob_space=ob_space, ac_space=ac_space,
-                                    hid_size=256, num_hid_layers=4)
+        #return mlp_policy.MlpPolicy(name=name, ob_space=ob_space, ac_space=ac_space, hid_size=256, num_hid_layers=4)
         #return cnn_policy.CnnPolicy(name=name, ob_space=ob_space, ac_space=ac_space)
     env = bench.Monitor(env, logger.get_dir() and
         osp.join(logger.get_dir(), str(rank)))
