@@ -29,37 +29,76 @@ class Capsule_policy(object):
 
         with tf.variable_scope('actor'):
             with tf.variable_scope('Conv1_layer'):
-                # Conv1, [batch_size, 20, 20, 32]
-                conv1 = tf.contrib.layers.conv2d(ob, num_outputs=32,
+                # Conv1, [batch_size, 20, 20, 256]
+                conv1 = tf.contrib.layers.conv2d(self.X, num_outputs=256,
                                                  kernel_size=9, stride=1,
                                                  padding='VALID')
+                assert conv1.get_shape() == [cfg.batch_size, 20, 20, 256]
 
-            # Primary Capsules layer, return [batch_size, 288, 8, 1]
+            # Primary Capsules layer, return [batch_size, 1152, 8, 1]
             with tf.variable_scope('PrimaryCaps_layer'):
-                primaryCaps1 = CapsLayer(num_outputs=8, vec_len=8, with_routing=False, layer_type='CONV')
-                caps1 = primaryCaps1(conv1, kernel_size=9, stride=2)
+                primaryCaps = CapsLayer(num_outputs=32, vec_len=8, with_routing=False, layer_type='CONV')
+                caps1 = primaryCaps(conv1, kernel_size=9, stride=2)
+                assert caps1.get_shape() == [cfg.batch_size, 1152, 8, 1]
 
             # DigitCaps layer, return [batch_size, 10, 16, 1]
-            with tf.variable_scope('DigitCaps_layer1'):
-                digitCaps1 = CapsLayer(num_outputs=1, vec_len=1, with_routing=True, layer_type='FC')
-                caps2 = digitCaps1(caps1)
+            with tf.variable_scope('DigitCaps_layer'):
+                digitCaps = CapsLayer(num_outputs=10, vec_len=16, with_routing=True, layer_type='FC')
+                self.caps2 = digitCaps(caps1)
 
-        with tf.variable_scope('critic'):
-            with tf.variable_scope('Conv1_layer'):
-                # Conv1, [batch_size, 20, 20, 32]
-                c_conv1 = tf.contrib.layers.conv2d(ob, num_outputs=32,
-                                                 kernel_size=9, stride=1,
-                                                 padding='VALID')
+            # Decoder structure in Fig. 2
+            # 1. Do masking, how:
+            with tf.variable_scope('Masking'):
+                # a). calc ||v_c||, then do softmax(||v_c||)
+                # [batch_size, 10, 16, 1] => [batch_size, 10, 1, 1]
+                self.v_length = tf.sqrt(tf.reduce_sum(tf.square(self.caps2),
+                                                      axis=2, keep_dims=True) + epsilon)
+                self.softmax_v = tf.nn.softmax(self.v_length, dim=1)
+                assert self.softmax_v.get_shape() == [cfg.batch_size, 10, 1, 1]
 
-            # Primary Capsules layer, return [batch_size, 288, 8, 1]
-            with tf.variable_scope('PrimaryCaps_layer'):
-                c_primaryCaps1 = CapsLayer(num_outputs=8, vec_len=8, with_routing=False, layer_type='CONV')
-                c_caps1 = c_primaryCaps1(c_conv1, kernel_size=9, stride=2)
+                # b). pick out the index of max softmax val of the 10 caps
+                # [batch_size, 10, 1, 1] => [batch_size] (index)
+                self.argmax_idx = tf.to_int32(tf.argmax(self.softmax_v, axis=1))
+                assert self.argmax_idx.get_shape() == [cfg.batch_size, 1, 1]
+                self.argmax_idx = tf.reshape(self.argmax_idx, shape=(cfg.batch_size,))
 
-            # DigitCaps layer, return [batch_size, 10, 16, 1]
-            with tf.variable_scope('DigitCaps_layer1'):
-                c_digitCaps1 = CapsLayer(num_outputs=3, vec_len=1, with_routing=True, layer_type='FC')
-                c_caps2 = c_digitCaps1(c_caps1)
+                self.one_hot = tf.one_hot(self.argmax_idx, 10)
+
+                # Method 1.
+                if not cfg.mask_with_y:
+                    # c). indexing
+                    # It's not easy to understand the indexing process with argmax_idx
+                    # as we are 3-dim animal
+
+                    masked_v = []
+                    for batch_size in range(cfg.batch_size):
+                        v = self.caps2[batch_size][self.argmax_idx[batch_size], :]
+                        masked_v.append(tf.reshape(v, shape=(1, 1, 16, 1)))
+
+                    self.masked_v = tf.concat(masked_v, axis=0)
+                    assert self.masked_v.get_shape() == [cfg.batch_size, 1, 16, 1]
+                # Method 2. masking with true label, default mode
+                else:
+                    # self.masked_v = tf.matmul(tf.squeeze(self.caps2), tf.reshape(self.Y, (-1, 10, 1)), transpose_a=True)
+                    self.masked_v = tf.multiply(tf.squeeze(self.caps2), tf.reshape(self.Y, (-1, 10, 1)))
+                    self.v_length = tf.sqrt(tf.reduce_sum(tf.square(self.caps2), axis=2, keep_dims=True) + epsilon)
+
+            # 2. Reconstructe the MNIST images with 3 FC layers
+            # [batch_size, 1, 16, 1] => [batch_size, 16] => [batch_size, 512]
+            with tf.variable_scope('Decoder'):
+                vector_j = tf.reshape(self.masked_v, shape=(cfg.batch_size, -1))
+                fc1 = tf.contrib.layers.fully_connected(vector_j, num_outputs=512)
+                assert fc1.get_shape() == [cfg.batch_size, 512]
+                fc2 = tf.contrib.layers.fully_connected(fc1, num_outputs=1024)
+                assert fc2.get_shape() == [cfg.batch_size, 1024]
+                self.decoded = tf.contrib.layers.fully_connected(fc2, num_outputs=784, activation_fn=tf.sigmoid)
+
+
+        x = self.one_hot
+        x = tf.nn.relu(U.dense(x, 512, 'lin', U.normc_initializer(1.0)))
+
+        y = self.one_hot
+        y = tf.nn.relu(U.dense(y, 512, 'ylin', U.normc_initializer(1.0)))
 
         '''
         x = ob
@@ -93,10 +132,11 @@ class Capsule_policy(object):
             raise NotImplementedError
         '''
 
-        logits = tf.reshape(c_caps2, (cfg.batch_size, -1))
-        #U.dense(c_caps3, pdtype.param_shape()[0], "logits", U.normc_initializer(0.01))
+        #logits = tf.reshape(c_caps2, (cfg.batch_size, -1))
+        logits = U.dense(x, pdtype.param_shape()[0], "logits", U.normc_initializer(0.01))
         self.pd = pdtype.pdfromflat(logits)
-        self.vpred = caps2 * 100
+        self.vpred = U.dense(y, 1, "value", U.normc_initializer(1.0))[:, 0]
+        #self.vpred = caps2 * 100
         #U.dense(y, 1, "value", U.normc_initializer(1.0))[:,0]
 
         self.state_in = []
@@ -104,11 +144,11 @@ class Capsule_policy(object):
 
         stochastic = tf.placeholder(dtype=tf.bool, shape=())
         ac = self.pd.sample() # XXX
-        self._act = U.function([stochastic, ob], [ac, self.vpred, caps2, logits])
+        self._act = U.function([stochastic, ob], [ac, self.vpred])
 
     def act(self, stochastic, ob):
         ob = np.tile(ob[np.newaxis, :], [cfg.batch_size, 1, 1, 1])
-        ac1, vpred1, _1, _2 =  self._act(stochastic, ob)
+        ac1, vpred1 =  self._act(stochastic, ob)
         '''
         print(_2[0])
         print(ac1[0])
