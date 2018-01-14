@@ -38,7 +38,7 @@ class Capsule_policy(object):
 
             # Primary Capsules layer, return [batch_size, 1152, 8, 1]
             with tf.variable_scope('PrimaryCaps_layer'):
-                primaryCaps = CapsLayer(num_outputs=32, vec_len=8, with_routing=False, layer_type='CONV')
+                primaryCaps = CapsLayer(num_outputs=8, vec_len=8, with_routing=False, layer_type='CONV')
                 caps1 = primaryCaps(conv1, kernel_size=9, stride=2)
                 assert caps1.get_shape() == [cfg.batch_size, 1152, 8, 1]
 
@@ -88,10 +88,10 @@ class Capsule_policy(object):
             # [batch_size, 1, 16, 1] => [batch_size, 16] => [batch_size, 512]
             with tf.variable_scope('Decoder'):
                 vector_j = tf.reshape(self.masked_v, shape=(cfg.batch_size, -1))
-                fc1 = tf.contrib.layers.fully_connected(vector_j, num_outputs=512)
-                assert fc1.get_shape() == [cfg.batch_size, 512]
-                fc2 = tf.contrib.layers.fully_connected(fc1, num_outputs=1024)
-                assert fc2.get_shape() == [cfg.batch_size, 1024]
+                fc1 = tf.contrib.layers.fully_connected(vector_j, num_outputs=256)
+                assert fc1.get_shape() == [cfg.batch_size, 256]
+                fc2 = tf.contrib.layers.fully_connected(fc1, num_outputs=512)
+                assert fc2.get_shape() == [cfg.batch_size, 512]
                 self.decoded = tf.contrib.layers.fully_connected(fc2, num_outputs=784, activation_fn=tf.sigmoid)
 
 
