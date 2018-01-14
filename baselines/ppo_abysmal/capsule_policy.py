@@ -58,11 +58,8 @@ class Capsule_policy(object):
 
             # DigitCaps layer, return [batch_size, 10, 16, 1]
             with tf.variable_scope('DigitCaps_layer1'):
-                c_digitCaps1 = CapsLayer(num_outputs=3, vec_len=16, with_routing=True, layer_type='FC')
+                c_digitCaps1 = CapsLayer(num_outputs=3, vec_len=1, with_routing=True, layer_type='FC')
                 c_caps2 = c_digitCaps1(c_caps1)
-
-                v_length = tf.sqrt(tf.reduce_sum(tf.square(c_caps2),
-                                                      axis=2, keep_dims=True) + epsilon)
 
         '''
         x = ob
@@ -96,7 +93,7 @@ class Capsule_policy(object):
             raise NotImplementedError
         '''
 
-        logits = tf.reshape(v_length, (cfg.batch_size, -1))
+        logits = tf.reshape(c_caps2, (cfg.batch_size, -1))
         #U.dense(c_caps3, pdtype.param_shape()[0], "logits", U.normc_initializer(0.01))
         self.pd = pdtype.pdfromflat(logits)
         self.vpred = caps2 * 100
