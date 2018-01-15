@@ -34,11 +34,11 @@ def train(env_id, num_timesteps, seed):
 
     pposgd_simple.learn(env, policy_fn,
         max_timesteps=int(num_timesteps * 1.1),
-        timesteps_per_actorbatch=128,
+        timesteps_per_actorbatch=32,
         clip_param=0.2, entcoeff=0.01,
-        optim_epochs=10, optim_stepsize=1e-3, optim_batchsize=128,
+        optim_epochs=10, optim_stepsize=1e-3, optim_batchsize=32,
         gamma=0.99, lam=0.95,
-        flag_load=0,
+        flag_load=-1,
         schedule='linear'
     )
     env.close()
