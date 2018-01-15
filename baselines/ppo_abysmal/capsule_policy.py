@@ -143,11 +143,12 @@ class Capsule_policy(object):
 
         stochastic = tf.placeholder(dtype=tf.bool, shape=())
         ac = self.pd.sample() # XXX
-        self._act = U.function([stochastic, ob], [ac, self.vpred])
+        self._act = U.function([stochastic, ob], [ac, self.vpred, logits])
 
     def act(self, stochastic, ob):
         ob = np.tile(ob[np.newaxis, :], [cfg.batch_size, 1, 1, 1])
-        ac1, vpred1 =  self._act(stochastic, ob)
+        ac1, vpred1, _ =  self._act(stochastic, ob)
+        print(_)
         '''
         print(_2[0])
         print(ac1[0])
