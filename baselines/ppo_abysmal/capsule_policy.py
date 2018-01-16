@@ -84,6 +84,7 @@ class Capsule_policy(object):
             # [batch_size, 1, 16, 1] => [batch_size, 16] => [batch_size, 512]
             with tf.variable_scope('Decoder'):
                 vector_j = tf.reshape(self.masked_v, shape=(cfg.batch_size, -1))
+                print(vector_j.shape)
                 fc1 = tf.contrib.layers.fully_connected(vector_j, num_outputs=256)
                 fc2 = tf.contrib.layers.fully_connected(fc1, num_outputs=512)
                 self.decoded = tf.contrib.layers.fully_connected(fc2, num_outputs=784, activation_fn=tf.sigmoid)
