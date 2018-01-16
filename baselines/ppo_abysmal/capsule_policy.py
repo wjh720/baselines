@@ -88,6 +88,10 @@ class Capsule_policy(object):
                 fc2 = tf.contrib.layers.fully_connected(fc1, num_outputs=512)
                 self.decoded = tf.contrib.layers.fully_connected(fc2, num_outputs=784, activation_fn=tf.sigmoid)
 
+        data_cap = '/home/icenter/capsule/Caps2/CapsNet-Tensorflow/logdir/'
+        U.load_state(data_cap + 'model_epoch_0000_step_428')
+        print('load capsule!!!')
+        time.sleep(3)
 
         x = self.one_hot
         x = tf.nn.relu(U.dense(x, 512, 'lin', U.normc_initializer(1.0)))
