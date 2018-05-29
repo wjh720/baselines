@@ -41,6 +41,8 @@ def main():
     logger.configure()
     train(args.env, num_timesteps=args.num_timesteps, seed=args.seed)
 
+    print('123')
+
 
 if __name__ == '__main__':
     main()
